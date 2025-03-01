@@ -1,4 +1,7 @@
 #include <NewPing.h>
+#include <Wire.h>
+#include <Adafruit_SSD1306.h>
+#include <Adafruit_GFX.h>
 
 #define LED 11
 #define BUTTON 12
