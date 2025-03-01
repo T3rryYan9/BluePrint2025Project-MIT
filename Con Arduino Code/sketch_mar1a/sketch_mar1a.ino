@@ -1,16 +1,20 @@
 #include <NewPing.h>
 #include <Wire.h>
-#include <Adafruit_SSD1306>
+#include <Adafruit_SSD1306.h>
 #include <Adafruit_GFX.h>
+#include <Servo.h>
 
 #define LED 11
 #define BUTTON 12
+#define SERVO_PIN 6
 #define POT_PIN A0
 #define ULTRASONIC_TRIGGER 9
 #define ULTRASONIC_ECHO 10
 
 int max_ultrasonic_distance_cm = 400;
 NewPing sonar(ULTRASONIC_TRIGGER, ULTRASONIC_ECHO, max_ultrasonic_distance_cm);
+
+Servo servo;
 
 void setup() {
   // put your setup code here, to 
@@ -19,12 +23,15 @@ void setup() {
   pinMode(POT_PIN, INPUT);
   Serial.begin(9600);
   Serial.println("Serial monitor starting...");
+  servo.attach(SERVO_PIN);
+  servo.write(0);
+  
 }
 
-void potentioLight() {
+void potentioServo() {
   int pot_value = analogRead(POT_PIN);
-  int brightness = map(pot_value,0,1023,0,255);
-  analogWrite(LED,brightness);
+  int servoMovement = map(pot_value,0,1023,0,180);
+  servo.write(servoMovement); 
   // Serial.println(brightness);
 }
 
@@ -35,7 +42,7 @@ void readUltraSensor() {
 
 void loop() {
   // fade_led();
-  potentioLight();
-  readUltraSensor();
+  potentioServo();
+  // readUltraSensor();
 }
 
