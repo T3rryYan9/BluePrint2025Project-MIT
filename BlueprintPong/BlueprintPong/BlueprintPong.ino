@@ -29,6 +29,17 @@ void setup() {
 
 }
 
+void BlinkArray2D() {
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 4; j++) {
+      digitalWrite(ledPin2d[i][j],HIGH);
+      delay(50);
+      digitalWrite(ledPin2d[i][j],LOW);
+      delay(50);
+    }
+  }
+}
+
 void blinkLED() {
   for (int i = 0; i < 12; i++) {
     digitalWrite(ledPins[i],HIGH);
@@ -41,5 +52,6 @@ void blinkLED() {
 void loop() {
   // put your main code here, to run repeatedly:
   // blinkLED();
+  BlinkArray2D();
 
 }
