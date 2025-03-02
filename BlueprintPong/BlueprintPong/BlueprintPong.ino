@@ -39,11 +39,13 @@ void printBoard() {
 void movePaddle() {
   int joystickValue = analogRead(joystickY);
   
-  if (joystickValue < 400 && paddleRow > 0) {
+  if (joystickValue > 600 && paddleRow > 0) {
     paddleRow--;  // Move up
+    Serial.print("Moving paddle up");
   }
-  if (joystickValue > 600 && paddleRow < boardRows - 1) {
+  if (joystickValue < 500 && paddleRow < boardRows - 1) {
     paddleRow++;  // Move down
+    Serial.print("Moving paddle down");
   }
 }
 
