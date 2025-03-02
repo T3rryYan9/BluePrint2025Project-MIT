@@ -10,6 +10,7 @@
 #define POT_PIN A0
 #define ULTRASONIC_TRIGGER 9
 #define ULTRASONIC_ECHO 10
+#define BUZZER_PIN 3
 
 int max_ultrasonic_distance_cm = 400;
 NewPing sonar(ULTRASONIC_TRIGGER, ULTRASONIC_ECHO, max_ultrasonic_distance_cm);
@@ -21,11 +22,15 @@ void setup() {
   pinMode(LED, OUTPUT);
   pinMode(BUTTON,INPUT_PULLUP);
   pinMode(POT_PIN, INPUT);
+  pinMode(BUZZER_PIN,OUTPUT);
   Serial.begin(9600);
   Serial.println("Serial monitor starting...");
   servo.attach(SERVO_PIN);
   servo.write(0);
-  
+  // buzz();
+  // digitalWrite(BUZZER_PIN,HIGH);
+  // delay(1000);
+  // digitalWrite(BUZZER_PIN,LOW);
 }
 
 void potentioServo() {
@@ -46,3 +51,8 @@ void loop() {
   // readUltraSensor();
 }
 
+void buzz() {
+  digitalWrite(BUZZER_PIN, HIGH);
+  delay(1);
+  digitalWrite(BUZZER_PIN,LOW);
+}
