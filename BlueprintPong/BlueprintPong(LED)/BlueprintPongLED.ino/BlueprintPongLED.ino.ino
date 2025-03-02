@@ -2,16 +2,17 @@ const int boardRows = 4;  // 4 rows in the grid
 const int boardCols = 12; // 12 columns in the grid
 
 int currentRow = 2;  // Start at the middle row
-int currentCol = 1;  // Start near the leftmost column
+int currentCol = 0;  // Start at the leftmost column (column 0)
 int directionX = 1;  // Ball moves to the right initially
 int directionY = 1;  // Ball moves diagonally down initially
 
 const int joystickY = A3; // Y-axis (controls paddle movement)
 
 int paddleRow = 2; // Paddle starts in the middle
-const int paddleCol = 0; // Paddle is always in the leftmost column
-const int ledstartport = 0;
-const int ledendport = 48;
+const int paddleCol = 11; // Paddle is always in the rightmost column (column 11)
+
+const int ledstartport = 1;  // Start at digital pin 1
+const int ledendport = 48;   // End at digital pin 48 (so we have 48 LEDs)
 
 void flickerLEDs() {
   for (int p = ledstartport; p <= ledendport; p++) {
@@ -23,15 +24,12 @@ void flickerLEDs() {
 }
 
 void setup() {
-  // Serial.begin(9600);  // Uncomment if you want debugging
   pinMode(joystickY, INPUT);
   
-  // Initialize LEDs as output
+  // Initialize LEDs as output starting from pin 1
   for (int pin = ledstartport; pin <= ledendport; pin++) {
     pinMode(pin, OUTPUT);
   }
-
-  // flickerLEDs();  // Flicker LEDs on startup
 }
 
 void clearBoard() {
@@ -45,11 +43,12 @@ void printBoard() {
   // Print the ball and paddle positions to the LEDs
   for (int row = 0; row < boardRows; row++) {
     for (int col = 0; col < boardCols; col++) {
-      int ledIndex = row * boardCols + col;
+      int ledIndex = row * boardCols + col;  // Calculate the LED index
+      int pin = ledstartport + ledIndex;     // Map to the correct digital pin
       if ((row == currentRow && col == currentCol) || (col == paddleCol && row == paddleRow)) {
-        digitalWrite(ledIndex, HIGH);  // Ball and Paddle
+        digitalWrite(pin, HIGH);  // Ball and Paddle
       } else {
-        digitalWrite(ledIndex, LOW);
+        digitalWrite(pin, LOW);
       }
     }
   }
@@ -58,16 +57,31 @@ void printBoard() {
 void movePaddle() {
   int joystickValue = analogRead(joystickY);
   
-  if (joystickValue > 600 && paddleRow >= 0) {
-    paddleRow--;  // Move paddle up
+  // Move paddle up if joystick is moved up
+  if (joystickValue > 600 && paddleRow > 0) {  // Prevent paddle from going above row 0
+    paddleRow--;  
   }
-  if (joystickValue < 500 && paddleRow < boardRows) {
-    paddleRow++;  // Move paddle down
+
+  // Move paddle down if joystick is moved down
+  if (joystickValue < 500 && paddleRow < boardRows - 1) {  // Prevent paddle from going below last row
+    paddleRow++;  
   }
 }
 
 void noise() {
   tone(52, 440, 1000);  // Play a tone on pin 52
+}
+
+bool isBallOnPaddle() {
+  // Check if the ball's position and the paddle's position are both "on" (LED is HIGH)
+  int ballLedIndex = currentRow * boardCols + currentCol;
+  int paddleLedIndex = paddleRow * boardCols + paddleCol;
+
+  int ballPin = ledstartport + ballLedIndex;
+  int paddlePin = ledstartport + paddleLedIndex;
+
+  // Return true if the ball and paddle LEDs are both on the same spot
+  return digitalRead(ballPin) == HIGH && digitalRead(paddlePin) == HIGH;
 }
 
 void loop() {
@@ -79,10 +93,10 @@ void loop() {
   currentCol += directionX;
   currentRow += directionY;
 
-  // Ball collision with paddle area (left side)
-  if (currentCol == paddleCol && currentRow == paddleRow && directionX == -1) {
-    directionX = 1;  // Ball bounces off paddle
-    currentCol = 1;  // Ensure it doesn't overlap with paddle
+  // Check if the ball is on the paddle (use the digitalRead check)
+  if (isBallOnPaddle() && directionX == 1) {
+    directionX = -1;  // Ball bounces off paddle (reverse direction)
+    currentCol = 10;  // Move ball a bit away from paddle (so it doesn't overlap)
     tone(52, 440, 2000);
     delay(333);
     tone(52, 554, 1334);
@@ -91,10 +105,12 @@ void loop() {
 
   // Ball collision with right wall (Game Over)
   if (currentCol >= boardCols) { 
-    tone(52, 200, 1000);
-    while (true) {
-
-  } // Stop game
+    currentRow = 2;  // Reset ball to middle
+    currentCol = 0;  // Reset ball to start near the left side
+    directionX = 1;  // Start moving right again
+    directionY = 1;  // Move diagonally down initially
+    tone(52, 440, 1000);  // Play game-over tone
+    delay(1000);  // Pause before restarting
   }
 
   // Ball collision with left wall (bounces back)
@@ -107,5 +123,5 @@ void loop() {
     directionY = -directionY;
   }
 
-  delay(900);  // Adjusted speed for smoother gameplay
+  delay(500);  // Adjusted speed for smoother gameplay
 }
