@@ -91,7 +91,9 @@ void loop() {
 
   // Ball collision with right wall (Game Over)
   if (currentCol >= boardCols) { 
-loop // Stop game
+    while (true) {
+
+    } // Stop game
   }
 
   // Ball collision with left wall (bounces back)
