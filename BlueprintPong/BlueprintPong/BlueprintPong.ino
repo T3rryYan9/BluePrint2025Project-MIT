@@ -12,6 +12,12 @@
 // #define LED_44 44
 
 const int ledPins[] = {22,24,26,28,30,32,34,36,38,40,42,44};
+const int ledPin2d[3][4] = {
+    {22,24,26,28},
+    {30,32,34,36},
+    {38,40,42,44}
+};
+
 
 void setup() {
   for (int i = 0; i < 12; i++) {
@@ -19,6 +25,7 @@ void setup() {
   }
   Serial.begin(9600);
   Serial.println("Led Starting...");
+  Serial.println(ledPin2d[3][4]);
 
 }
 
@@ -33,6 +40,6 @@ void blinkLED() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  blinkLED();
+  // blinkLED();
 
 }
