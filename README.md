@@ -11,6 +11,7 @@ Hackathon Files Navigation:
 - Go to the BlueprintPong file and run the .ino file with the attached circuit diagram.
 
 Project Photo: https://drive.google.com/drive/folders/19n6xb4STxzNAo-oVc_X0z2ASvd7RN5Y6?usp=sharing
+
 3/1/25-3/2/25
 
 Credits to Charlie Hernandez, Conrad Pinto, and Vihan
